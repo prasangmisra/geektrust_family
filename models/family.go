@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"geektrust/helpers"
 )
 
@@ -10,8 +9,8 @@ type Family struct {
 	Person *Person
 }
 
-//Init initializes the family tree
-func (f *Family) Init() {
+//PopulateFamilyTree initializes the family tree
+func (f *Family) PopulateFamilyTree() {
 	//Going bottom up
 	Yodhan := Person{Gender: helpers.GenderMale, Name: "Yodhan"}
 
@@ -101,63 +100,56 @@ func (f *Family) Init() {
 }
 
 //AddChild function will add the child to the family
-func (f *Family) AddChild(motherName string, childName string, gender string) (string, bool) {
+func (f *Family) AddChild(motherName string, childName string, childGender string) (string, bool) {
 	//Check if the child name already exist in the family tree
 	_, childExists := f.Person.IfPersonInFamily(childName)
 	if childExists {
 		return helpers.ResponseChildAdditionFail, false
 	}
 	//Find the mother node
-	mother, motherExists := f.Person.IfPersonInFamily(motherName)
-	if !motherExists {
+	familyMember, isFamilyMemberExist := f.Person.IfPersonInFamily(motherName)
+	if !isFamilyMemberExist {
 		return helpers.ResponseNotFound, false
 	}
-	if mother.Gender == helpers.GenderMale {
+	if familyMember.Gender == helpers.GenderMale {
 		return helpers.ResponseChildAdditionFail, false
 	}
 	//If found, check if female
 	//Add the person struct as the child of the mother node
-	if motherExists {
-		mother.Children = append(mother.Children, CreatePerson(childName, gender))
+	if isFamilyMemberExist {
+		familyMember.Children = append(familyMember.Children, CreatePerson(childName, childGender))
 	}
 	return helpers.ResponseChildAdditionSuccess, true
 }
 
 //IfPersonInFamily function checks if the person exist in the family tree
-func (f *Family) IfPersonInFamily(name string) (*Person, bool) {
-	fmt.Println("Inside family, checking ", name)
-	if f.Person.Name == name {
+func (f *Family) IfPersonInFamily(familyMemberName string) (*Person, bool) {
+	if f.Person.Name == familyMemberName {
 		return f.Person, true
 	}
-	return f.Person.IfPersonInFamily(name)
+	return f.Person.IfPersonInFamily(familyMemberName)
 }
 
 //FindParentUncleAunt checks if there is any parental/maternal uncle/aunt present for the given input name
-func (f *Family) FindParentUncleAunt(name string, gender string, isPaternal bool) (*[]Person, bool, string) {
+func (f *Family) FindParentUncleAunt(familyMemberName string, relationshipGender string, isPaternal bool) (*[]Person, bool, string) {
 	//1. Find if name exists in the family
-	fmt.Println("Checking for ", name)
-	person, personExistBool := f.IfPersonInFamily(name)
-	fmt.Println("Result is :", personExistBool, person.Name)
-	if personExistBool {
+	familyMember, isFamilyMemberExist := f.IfPersonInFamily(familyMemberName)
+	if isFamilyMemberExist {
 		//2. Find father
-		//fmt.Println("Person exists")
-		parent, parentExistBool := f.FindParent(person.Name)
-		fmt.Println("ParentExist bool:", parentExistBool)
-		if parentExistBool && isPaternal {
+		parent, isParentExist := f.FindParent(familyMember.Name)
+		if isParentExist && isPaternal {
 			parent = parent.Spouce
-			parentExistBool = parent != nil
+			isParentExist = parent != nil
 		}
-		if parentExistBool {
+		if isParentExist {
 			//3. Find father's siblings
-			//fmt.Println("Parent exists,", parent.Name)
 			siblings, siblingsBool, _ := f.FindSiblings(parent.Name)
 			if siblingsBool {
-				//fmt.Println("Siblings exists, and they are", len(*siblings))
 				var result []Person
-				for _, value := range *siblings {
+				for _, sibling := range *siblings {
 					//4. Shortlist father's siblings based on gender
-					if value.Gender == gender {
-						result = append(result, value)
+					if sibling.Gender == relationshipGender {
+						result = append(result, sibling)
 					}
 				}
 				if len(result) > 0 {
@@ -166,7 +158,6 @@ func (f *Family) FindParentUncleAunt(name string, gender string, isPaternal bool
 				return &result, false, helpers.ResponseNone
 			}
 		}
-		fmt.Println("Returning NONE")
 		return &[]Person{}, false, helpers.ResponseNone
 	}
 	return &[]Person{}, false, helpers.ResponseNotFound
@@ -175,46 +166,43 @@ func (f *Family) FindParentUncleAunt(name string, gender string, isPaternal bool
 
 //FindInLaw function returns the nodes of the brother/sister in laws of the given node
 //gender = male for brother in law, female for sister in law
-func (f *Family) FindInLaw(name string, gender string) (*[]Person, bool, string) {
+func (f *Family) FindInLaw(familyMemberName string, inLawGender string) (*[]Person, bool, string) {
 	//1.  Find if name exists in the family
-	//fmt.Println("Inside Findinlaw")
-	person, personExistBool := f.IfPersonInFamily(name)
-	//fmt.Println(personExistBool)
-	if personExistBool {
-		//fmt.Println("PersonExists and name is:", person.Name)
-		var result []Person
+	familyMember, isFamilyMemberExist := f.IfPersonInFamily(familyMemberName)
+	if isFamilyMemberExist {
+		var inLaws []Person
 		//2.1 Get Spouce node
-		spouce := person.Spouce
+		spouce := familyMember.Spouce
 		if spouce != nil {
 			//2.2 If spouce exist, siblings of spouce which are male
 			spouceSiblings, spouceSiblingsBool, _ := f.FindSiblings(spouce.Name)
 			if spouceSiblingsBool {
-				for _, value := range *spouceSiblings {
-					if value.Gender == gender {
-						result = append(result, value)
+				for _, spouceSibling := range *spouceSiblings {
+					if spouceSibling.Gender == inLawGender {
+						inLaws = append(inLaws, spouceSibling)
 					}
 
 				}
 			}
 		}
 		//3.1 Get all female siblings
-		siblings, siblingsBool, _ := f.FindSiblings(person.Name)
-		if siblingsBool {
-			for _, value := range *siblings {
+		siblings, isSiblings, _ := f.FindSiblings(familyMember.Name)
+		if isSiblings {
+			for _, sibling := range *siblings {
 				//3.2 All the male spouce of siblings in the result
-				if value.Gender != gender && value.Spouce != nil {
-					result = append(result, *value.Spouce)
+				if sibling.Gender != familyMemberName && sibling.Spouce != nil {
+					inLaws = append(inLaws, *sibling.Spouce)
 				}
 			}
 		}
-		if len(result) > 0 {
-			return &result, true, helpers.ResponseChildAdditionSuccess
+		if len(inLaws) > 0 {
+			return &inLaws, true, helpers.ResponseChildAdditionSuccess
 		}
-		return &result, false, helpers.ResponseNone
+		return &inLaws, false, helpers.ResponseNone
 	}
 
 	//Return the result
-	return &[]Person{}, personExistBool, helpers.ResponseNotFound
+	return &[]Person{}, isFamilyMemberExist, helpers.ResponseNotFound
 }
 
 //FindChildren returns the nodes of all the children according to gender of the given node
@@ -225,7 +213,6 @@ func (f *Family) FindChildren(name string, gender string) (*[]Person, bool, stri
 		if person.Gender == helpers.GenderMale && person.Spouce != nil {
 			person = person.Spouce
 		}
-		//fmt.Println("Checking for children of ", person.Name)
 		var result []Person
 		for _, value := range person.Children {
 			if value.Gender == gender {
@@ -270,7 +257,6 @@ func (f *Family) FindSiblings(name string) (*[]Person, bool, string) {
 //FindParent returns the parent node of the given node
 func (f *Family) FindParent(name string) (*Person, bool) {
 	if f.Person.Name == name {
-		//fmt.Println("This is the root node, no parents")
 		return &Person{}, false
 	}
 	return f.Person.FindParent(name)

@@ -4,7 +4,7 @@ import "testing"
 
 func TestValidCommandGetRelationShipPositive(t *testing.T) {
 	inputString := "GET_RELATIONSHIP Satvy Sister-In-Law"
-	resultBool, _ := isValidCommand(inputString)
+	resultBool, _ := IsValidCommand(inputString)
 	if !resultBool {
 		t.Errorf("Expected true, received %v", resultBool)
 	}
@@ -13,7 +13,7 @@ func TestValidCommandGetRelationShipPositive(t *testing.T) {
 
 func TestValidCommandGetRelationShipNegativeEmptyString(t *testing.T) {
 	inputString := "GET_RELATIONSHIP Satvy "
-	resultBool, result := isValidCommand(inputString)
+	resultBool, result := IsValidCommand(inputString)
 	if resultBool {
 		t.Errorf("Expected true, received %v", len(result))
 	}
@@ -21,7 +21,7 @@ func TestValidCommandGetRelationShipNegativeEmptyString(t *testing.T) {
 
 func TestValidCommandGetRelationShipNegativeLessParams(t *testing.T) {
 	inputString := "GET_RELATIONSHIP Satvy"
-	resultBool, result := isValidCommand(inputString)
+	resultBool, result := IsValidCommand(inputString)
 	if resultBool {
 		t.Errorf("Expected true, received %v", len(result))
 	}
@@ -29,7 +29,7 @@ func TestValidCommandGetRelationShipNegativeLessParams(t *testing.T) {
 
 func TestValidCommandGetRelationShipNegativeMoreParams(t *testing.T) {
 	inputString := "GET_RELATIONSHIP Satvy Sister In Law"
-	resultBool, result := isValidCommand(inputString)
+	resultBool, result := IsValidCommand(inputString)
 	if resultBool {
 		t.Errorf("Expected true, received %v", len(result))
 	}
@@ -37,7 +37,7 @@ func TestValidCommandGetRelationShipNegativeMoreParams(t *testing.T) {
 
 func TestValidCommandGetRelationShipNegativeWrongCommandName(t *testing.T) {
 	inputString := "GET_RELATIONSHIPS Satvy Sister-In-Law"
-	resultBool, result := isValidCommand(inputString)
+	resultBool, result := IsValidCommand(inputString)
 	if resultBool {
 		t.Errorf("Expected true, received %v", len(result))
 	}
@@ -45,7 +45,7 @@ func TestValidCommandGetRelationShipNegativeWrongCommandName(t *testing.T) {
 
 func TestValidCommandAddPositive(t *testing.T) {
 	inputString := "ADD_CHILD Satvy Disha Female"
-	resultBool, _ := isValidCommand(inputString)
+	resultBool, _ := IsValidCommand(inputString)
 	if !resultBool {
 		t.Errorf("Expected true, received %v", resultBool)
 	}
@@ -54,7 +54,7 @@ func TestValidCommandAddPositive(t *testing.T) {
 
 func TestValidCommandAddNegativeLessParams(t *testing.T) {
 	inputString := "ADD_CHILD Satvy Disha "
-	resultBool, _ := isValidCommand(inputString)
+	resultBool, _ := IsValidCommand(inputString)
 	if resultBool {
 		t.Errorf("Expected false, received %v", resultBool)
 	}
@@ -63,7 +63,7 @@ func TestValidCommandAddNegativeLessParams(t *testing.T) {
 
 func TestValidCommandAddNegativeMoreParams(t *testing.T) {
 	inputString := "ADD_CHILD Satvy Disha Female Female"
-	resultBool, _ := isValidCommand(inputString)
+	resultBool, _ := IsValidCommand(inputString)
 	if resultBool {
 		t.Errorf("Expected false, received %v", resultBool)
 	}
@@ -71,7 +71,7 @@ func TestValidCommandAddNegativeMoreParams(t *testing.T) {
 
 func TestValidCommandAddNegativeWrongGender(t *testing.T) {
 	inputString := "ADD_CHILD Satvy Disha Females"
-	resultBool, _ := isValidCommand(inputString)
+	resultBool, _ := IsValidCommand(inputString)
 	if resultBool {
 		t.Errorf("Expected false, received %v", resultBool)
 	}
@@ -79,7 +79,7 @@ func TestValidCommandAddNegativeWrongGender(t *testing.T) {
 
 func TestValidCommandAddNegativeWrongCommandName(t *testing.T) {
 	inputString := "ADD_CHILDREN Satvy Disha Females"
-	resultBool, _ := isValidCommand(inputString)
+	resultBool, _ := IsValidCommand(inputString)
 	if resultBool {
 		t.Errorf("Expected false, received %v", resultBool)
 	}
@@ -87,7 +87,7 @@ func TestValidCommandAddNegativeWrongCommandName(t *testing.T) {
 
 func TestValidCommandNegativeWrongCommandName(t *testing.T) {
 	inputString := "ADD_GET Satvy Disha Females"
-	resultBool, _ := isValidCommand(inputString)
+	resultBool, _ := IsValidCommand(inputString)
 	if resultBool {
 		t.Errorf("Expected false, received %v", resultBool)
 	}

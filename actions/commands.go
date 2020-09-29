@@ -7,14 +7,14 @@ import (
 )
 
 //RunCommands function will run all the valid commands from the file
-func RunCommands(input [][]string, family models.Family) bool {
-	for _, value := range input {
-		switch value[0] {
+func RunCommands(commands [][]string, familyTree models.Family) bool {
+	for _, command := range commands {
+		switch command[0] {
 		case helpers.AddChild:
-			fmt.Println(AddChildToFamily(family, value[1], value[2], value[3]))
+			fmt.Println(AddChildToFamily(familyTree, command[1], command[2], command[3]))
 			break
 		case helpers.GetRelationship:
-			fmt.Println(GetRelationshipOfFamily(family, value[1], value[2]))
+			fmt.Println(GetRelationshipOfFamily(familyTree, command[1], command[2]))
 			break
 		default:
 			fmt.Println("")
@@ -24,45 +24,45 @@ func RunCommands(input [][]string, family models.Family) bool {
 }
 
 //AddChildToFamily is the business logic implementation of the command
-func AddChildToFamily(family models.Family, mother string, child string, gender string) string {
-	responseString, _ := family.AddChild(mother, child, gender)
+func AddChildToFamily(familyTree models.Family, motherOfNewChild string, newChildName string, newChildGender string) string {
+	responseString, _ := familyTree.AddChild(motherOfNewChild, newChildName, newChildGender)
 	return responseString
 }
 
 //GetRelationshipOfFamily function is the business logic of the implementation of this command
-func GetRelationshipOfFamily(family models.Family, name string, relationship string) string {
+func GetRelationshipOfFamily(familyTree models.Family, familyMemberName string, familyMemberRelationship string) string {
 	//First of all check if member exists in family
-	_, existBool := family.IfPersonInFamily(name)
+	_, existBool := familyTree.IfPersonInFamily(familyMemberName)
 	if !existBool {
 		return helpers.ResponseNotFound
 	}
-	switch relationship {
+	switch familyMemberRelationship {
 	case helpers.RelationshipSiblings:
-		return SiblingsCommand(family, name)
+		return SiblingsCommand(familyTree, familyMemberName)
 	case helpers.RelationshipDaughter:
-		return ChildCommand(family, name, helpers.GenderFemale)
+		return ChildCommand(familyTree, familyMemberName, helpers.GenderFemale)
 	case helpers.RelationshipSon:
-		return ChildCommand(family, name, helpers.GenderMale)
+		return ChildCommand(familyTree, familyMemberName, helpers.GenderMale)
 	case helpers.RelationshipBrotherInLaw:
-		return InLawCommand(family, name, helpers.GenderMale)
+		return InLawCommand(familyTree, familyMemberName, helpers.GenderMale)
 	case helpers.RelationshipSisterInLaw:
-		return InLawCommand(family, name, helpers.GenderFemale)
+		return InLawCommand(familyTree, familyMemberName, helpers.GenderFemale)
 	case helpers.RelationshipMaternalAunt:
-		return UncleAuntCommand(family, name, helpers.GenderFemale, false)
+		return UncleAuntCommand(familyTree, familyMemberName, helpers.GenderFemale, false)
 	case helpers.RelationshipPaternalAunt:
-		return UncleAuntCommand(family, name, helpers.GenderFemale, true)
+		return UncleAuntCommand(familyTree, familyMemberName, helpers.GenderFemale, true)
 	case helpers.RelationshipMaternalUncle:
-		return UncleAuntCommand(family, name, helpers.GenderMale, false)
+		return UncleAuntCommand(familyTree, familyMemberName, helpers.GenderMale, false)
 	case helpers.RelationshipPaternalUncle:
-		return UncleAuntCommand(family, name, helpers.GenderMale, true)
+		return UncleAuntCommand(familyTree, familyMemberName, helpers.GenderMale, true)
 	default:
 		return ""
 	}
 }
 
-//UncleAuntCommand function
-func UncleAuntCommand(family models.Family, name string, gender string, isPaternal bool) string {
-	uncleAunts, uncleAuntBool, uncleAuntsResponseString := family.FindParentUncleAunt(name, gender, isPaternal)
+//UncleAuntCommand function is the command to find the Maternal/Paternal Uncle/Aunt if present
+func UncleAuntCommand(familyTree models.Family, familyMemberName string, uncleAuntGender string, isPaternal bool) string {
+	uncleAunts, uncleAuntBool, uncleAuntsResponseString := familyTree.FindParentUncleAunt(familyMemberName, uncleAuntGender, isPaternal)
 	if !uncleAuntBool {
 		return uncleAuntsResponseString
 	}
@@ -78,9 +78,9 @@ func UncleAuntCommand(family models.Family, name string, gender string, isPatern
 	return responseString
 }
 
-//InLawCommand function
-func InLawCommand(family models.Family, name string, gender string) string {
-	inLaw, inLawBool, inLawResponseString := family.FindInLaw(name, gender)
+//InLawCommand function is the command to find the brother/sister in law of the family member
+func InLawCommand(familyTree models.Family, familyMemberName string, inLawGender string) string {
+	inLaw, inLawBool, inLawResponseString := familyTree.FindInLaw(familyMemberName, inLawGender)
 	if !inLawBool {
 		return inLawResponseString
 	}
@@ -95,36 +95,37 @@ func InLawCommand(family models.Family, name string, gender string) string {
 	return responseString
 }
 
-//ChildCommand function
-func ChildCommand(family models.Family, name string, gender string) string {
-	children, childrenBool, childResponseString := family.FindChildren(name, gender)
-	if !childrenBool {
-		return childResponseString
+//ChildCommand function returns the names of the children of a family member if present
+//childGender is Male for son and Female for daughter
+func ChildCommand(familyTree models.Family, familyMemberName string, childGender string) string {
+	allChildren, hasChildren, hasChidrenResponse := familyTree.FindChildren(familyMemberName, childGender)
+	if !hasChildren {
+		return hasChidrenResponse
 	}
-	responseString := ""
-	for key, value := range *children {
+	listOfChidren := ""
+	for key, child := range *allChildren {
 		if key == 0 {
-			responseString += value.Name
+			listOfChidren += child.Name
 		} else {
-			responseString += " " + value.Name
+			listOfChidren += " " + child.Name
 		}
 	}
-	return responseString
+	return listOfChidren
 }
 
-//SiblingsCommand function
-func SiblingsCommand(family models.Family, name string) string {
-	siblings, siblingBool, siblingResponse := family.FindSiblings(name)
-	if !siblingBool {
-		return siblingResponse
+//SiblingsCommand function returns the list of all the siblings of a family member
+func SiblingsCommand(familyTree models.Family, familyMemberName string) string {
+	allSiblings, hasSiblings, hasSiblingResponse := familyTree.FindSiblings(familyMemberName)
+	if !hasSiblings {
+		return hasSiblingResponse
 	}
-	responseString := ""
-	for key, value := range *siblings {
+	listOfSiblings := ""
+	for key, sibling := range *allSiblings {
 		if key == 0 {
-			responseString += value.Name
+			listOfSiblings += sibling.Name
 		} else {
-			responseString += " " + value.Name
+			listOfSiblings += " " + sibling.Name
 		}
 	}
-	return responseString
+	return listOfSiblings
 }

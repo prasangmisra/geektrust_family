@@ -5,11 +5,10 @@ import (
 	"testing"
 )
 
-var family Family
+var familyTree Family
 
 func TestStruct(t *testing.T) {
-	var family Family
-	if family.Person != nil {
+	if familyTree.Person != nil {
 		t.Errorf("This should have been nil")
 	}
 }
@@ -20,68 +19,68 @@ func TestAddChild(t *testing.T) {
 	queen.Name = "Anga"
 	child.Name = "Lika"
 	child.Gender = "Male"
-	family.Person = &queen
+	familyTree.Person = &queen
 	queen.Children = append(queen.Children, &child)
-	_, resultBool := family.AddChild("Anga", "Disha1", "Female")
+	_, resultBool := familyTree.AddChild("Anga", "Disha1", "Female")
 	if !resultBool {
-		t.Errorf("Expected true, got %v with name %v", resultBool, len(family.Person.Children))
+		t.Errorf("Expected true, got %v with name %v", resultBool, len(familyTree.Person.Children))
 	}
 }
 
 func TestInit(t *testing.T) {
-	family.Init()
-	if len(family.Person.Children) != 5 {
-		t.Errorf("Expected 5, got %v", len(family.Person.Children))
+	familyTree.PopulateFamilyTree()
+	if len(familyTree.Person.Children) != 5 {
+		t.Errorf("Expected 5, got %v", len(familyTree.Person.Children))
 	}
 }
 
 func TestAddChildAfterInit(t *testing.T) {
-	family.Init()
-	_, resultBool := family.AddChild("Krithi", "Disha", "Female")
+	familyTree.PopulateFamilyTree()
+	_, resultBool := familyTree.AddChild("Krithi", "Disha", "Female")
 	if !resultBool {
-		t.Errorf("Expected true, got %v with name %v", resultBool, len(family.Person.FindChildrenWithName("Satya").FindChildrenWithName("Vyas").FindChildrenWithName("Krithi").Children))
+		t.Errorf("Expected true, got %v with name %v", resultBool, len(familyTree.Person.FindChildrenWithName("Satya").FindChildrenWithName("Vyas").FindChildrenWithName("Krithi").Children))
 	}
 }
 
 func TestAddChildNegativeDuplicate(t *testing.T) {
-	family.Init()
-	_, resultBool := family.AddChild("Krithi", "Krithi", "Female")
+	familyTree.PopulateFamilyTree()
+	_, resultBool := familyTree.AddChild("Krithi", "Krithi", "Female")
 	if resultBool {
-		t.Errorf("Expected true, got %v with name %v", resultBool, len(family.Person.FindChildrenWithName("Satya").FindChildrenWithName("Vyas").FindChildrenWithName("Krithi").Children))
+		t.Errorf("Expected true, got %v with name %v", resultBool, len(familyTree.Person.FindChildrenWithName("Satya").FindChildrenWithName("Vyas").FindChildrenWithName("Krithi").Children))
 	}
 }
 func TestAddChildNegativeNoMother(t *testing.T) {
-	family.Init()
-	_, resultBool := family.AddChild("Disha", "Laksh", "Male")
+	familyTree.PopulateFamilyTree()
+	_, resultBool := familyTree.AddChild("Disha", "Laksh", "Male")
 	if resultBool {
-		t.Errorf("Expected true, got %v with name %v", resultBool, len(family.Person.FindChildrenWithName("Satya").FindChildrenWithName("Vyas").FindChildrenWithName("Krithi").Children))
+		t.Errorf("Expected true, got %v with name %v", resultBool, len(familyTree.Person.FindChildrenWithName("Satya").FindChildrenWithName("Vyas").FindChildrenWithName("Krithi").Children))
 	}
 }
 func TestAddChildNegativeMotherMale(t *testing.T) {
-	family.Init()
-	_, resultBool := family.AddChild("Chit", "Laksh", "Male")
+	familyTree.PopulateFamilyTree()
+	_, resultBool := familyTree.AddChild("Chit", "Laksh", "Male")
 	if resultBool {
-		t.Errorf("Expected true, got %v with name %v", resultBool, len(family.Person.FindChildrenWithName("Satya").FindChildrenWithName("Vyas").FindChildrenWithName("Krithi").Children))
+		t.Errorf("Expected true, got %v with name %v", resultBool, len(familyTree.Person.FindChildrenWithName("Satya").FindChildrenWithName("Vyas").FindChildrenWithName("Krithi").Children))
 	}
 }
 func TestFindPersonPositive(t *testing.T) {
-	family.Init()
-	result, resultBool := family.IfPersonInFamily("Atya")
+	familyTree.PopulateFamilyTree()
+	result, resultBool := familyTree.IfPersonInFamily("Atya")
 	if !resultBool {
 		t.Errorf("Expected true, got %v with name %v", resultBool, result.Name)
 	}
 }
 
 func TestFindPersonPositiveRoot(t *testing.T) {
-	family.Init()
-	result, resultBool := family.IfPersonInFamily("Anga")
+	familyTree.PopulateFamilyTree()
+	result, resultBool := familyTree.IfPersonInFamily("Anga")
 	if !resultBool {
 		t.Errorf("Expected true, got %v with name %v", resultBool, result.Name)
 	}
 }
 func TestMaternalAunt(t *testing.T) {
-	family.Init()
-	result, resultBool, _ := family.FindParentUncleAunt("Yodhan", helpers.GenderFemale, false)
+	familyTree.PopulateFamilyTree()
+	result, resultBool, _ := familyTree.FindParentUncleAunt("Yodhan", helpers.GenderFemale, false)
 	if !resultBool {
 		t.Errorf("Expected true, got %v and number:%v", resultBool, len(*result))
 		for _, value := range *result {
@@ -91,8 +90,8 @@ func TestMaternalAunt(t *testing.T) {
 }
 
 func TestMaternalAuntNegativeNotFound(t *testing.T) {
-	family.Init()
-	result, resultBool, _ := family.FindParentUncleAunt("Todhan", helpers.GenderFemale, false)
+	familyTree.PopulateFamilyTree()
+	result, resultBool, _ := familyTree.FindParentUncleAunt("Todhan", helpers.GenderFemale, false)
 	if resultBool {
 		t.Errorf("Expected true, got %v and number:%v", resultBool, len(*result))
 		for _, value := range *result {
@@ -101,8 +100,8 @@ func TestMaternalAuntNegativeNotFound(t *testing.T) {
 	}
 }
 func TestPaternalAunt(t *testing.T) {
-	family.Init()
-	result, resultBool, _ := family.FindParentUncleAunt("Dritha", helpers.GenderFemale, true)
+	familyTree.PopulateFamilyTree()
+	result, resultBool, _ := familyTree.FindParentUncleAunt("Dritha", helpers.GenderFemale, true)
 	if !resultBool {
 		t.Errorf("Expected true, got %v and number:%v", resultBool, len(*result))
 		for _, value := range *result {
@@ -112,8 +111,8 @@ func TestPaternalAunt(t *testing.T) {
 }
 
 func TestPaternalAuntNegativeNone(t *testing.T) {
-	family.Init()
-	result, resultBool, _ := family.FindParentUncleAunt("Yodhan", helpers.GenderFemale, true)
+	familyTree.PopulateFamilyTree()
+	result, resultBool, _ := familyTree.FindParentUncleAunt("Yodhan", helpers.GenderFemale, true)
 	if resultBool {
 		t.Errorf("Expected true, got %v and number:%v", resultBool, len(*result))
 		for _, value := range *result {
@@ -122,8 +121,8 @@ func TestPaternalAuntNegativeNone(t *testing.T) {
 	}
 }
 func TestMaternalUncle(t *testing.T) {
-	family.Init()
-	result, resultBool, _ := family.FindParentUncleAunt("Yodhan", helpers.GenderMale, false)
+	familyTree.PopulateFamilyTree()
+	result, resultBool, _ := familyTree.FindParentUncleAunt("Yodhan", helpers.GenderMale, false)
 	if !resultBool {
 		t.Errorf("Expected true, got %v and number:%v", resultBool, len(*result))
 		for _, value := range *result {
@@ -133,8 +132,8 @@ func TestMaternalUncle(t *testing.T) {
 }
 
 func TestPaternalUncle(t *testing.T) {
-	family.Init()
-	result, resultBool, _ := family.FindParentUncleAunt("Dritha", helpers.GenderMale, true)
+	familyTree.PopulateFamilyTree()
+	result, resultBool, _ := familyTree.FindParentUncleAunt("Dritha", helpers.GenderMale, true)
 	if !resultBool {
 		t.Errorf("Expected true, got %v and number:%v", resultBool, len(*result))
 		for _, value := range *result {
@@ -144,8 +143,8 @@ func TestPaternalUncle(t *testing.T) {
 }
 
 func TestMaternalAuntNegative(t *testing.T) {
-	family.Init()
-	result, resultBool, _ := family.FindParentUncleAunt("Laki", helpers.GenderFemale, false)
+	familyTree.PopulateFamilyTree()
+	result, resultBool, _ := familyTree.FindParentUncleAunt("Laki", helpers.GenderFemale, false)
 	if resultBool {
 		t.Errorf("Expected true, got %v and number:%v", resultBool, len(*result))
 		for _, value := range *result {
@@ -154,8 +153,8 @@ func TestMaternalAuntNegative(t *testing.T) {
 	}
 }
 func TestBrotherInLawPositive(t *testing.T) {
-	family.Init()
-	result, resultBool, _ := family.FindInLaw("Chit", helpers.GenderMale)
+	familyTree.PopulateFamilyTree()
+	result, resultBool, _ := familyTree.FindInLaw("Chit", helpers.GenderMale)
 	if !resultBool {
 		t.Errorf("Expected true, got %v and number:%v", resultBool, len(*result))
 		for _, value := range *result {
@@ -165,8 +164,8 @@ func TestBrotherInLawPositive(t *testing.T) {
 }
 
 func TestBrotherInLawPositiveSpouce(t *testing.T) {
-	family.Init()
-	result, resultBool, _ := family.FindInLaw("Amba", helpers.GenderMale)
+	familyTree.PopulateFamilyTree()
+	result, resultBool, _ := familyTree.FindInLaw("Amba", helpers.GenderMale)
 	if !resultBool {
 		t.Errorf("Expected true, got %v and number:%v", resultBool, len(*result))
 		for _, value := range *result {
@@ -175,8 +174,8 @@ func TestBrotherInLawPositiveSpouce(t *testing.T) {
 	}
 }
 func TestBrotherInLawNegativeNone(t *testing.T) {
-	family.Init()
-	result, resultBool, _ := family.FindInLaw("Vila", helpers.GenderMale)
+	familyTree.PopulateFamilyTree()
+	result, resultBool, _ := familyTree.FindInLaw("Vila", helpers.GenderMale)
 	if resultBool {
 		t.Errorf("Expected true, got %v and number:%v", resultBool, len(*result))
 		for _, value := range *result {
@@ -185,8 +184,8 @@ func TestBrotherInLawNegativeNone(t *testing.T) {
 	}
 }
 func TestBrotherInLawNegativeNotFound(t *testing.T) {
-	family.Init()
-	result, resultBool, _ := family.FindInLaw("Wila", helpers.GenderMale)
+	familyTree.PopulateFamilyTree()
+	result, resultBool, _ := familyTree.FindInLaw("Wila", helpers.GenderMale)
 	if resultBool {
 		t.Errorf("Expected true, got %v and number:%v", resultBool, len(*result))
 		for _, value := range *result {
@@ -195,8 +194,8 @@ func TestBrotherInLawNegativeNotFound(t *testing.T) {
 	}
 }
 func TestSisterInLawPositive(t *testing.T) {
-	family.Init()
-	result, resultBool, _ := family.FindInLaw("Chit", helpers.GenderFemale)
+	familyTree.PopulateFamilyTree()
+	result, resultBool, _ := familyTree.FindInLaw("Chit", helpers.GenderFemale)
 	if !resultBool {
 		t.Errorf("Expected true, got %v and number:%v", resultBool, len(*result))
 		for _, value := range *result {
@@ -206,8 +205,8 @@ func TestSisterInLawPositive(t *testing.T) {
 }
 
 func TestSisterInLawNegativeNone(t *testing.T) {
-	family.Init()
-	result, resultBool, _ := family.FindInLaw("Vila", helpers.GenderFemale)
+	familyTree.PopulateFamilyTree()
+	result, resultBool, _ := familyTree.FindInLaw("Vila", helpers.GenderFemale)
 	if resultBool {
 		t.Errorf("Expected true, got %v and number:%v", resultBool, len(*result))
 		for _, value := range *result {
@@ -217,8 +216,8 @@ func TestSisterInLawNegativeNone(t *testing.T) {
 }
 
 func TestSisterInLawNegativeNotFound(t *testing.T) {
-	family.Init()
-	result, resultBool, _ := family.FindInLaw("Wila", helpers.GenderFemale)
+	familyTree.PopulateFamilyTree()
+	result, resultBool, _ := familyTree.FindInLaw("Wila", helpers.GenderFemale)
 	if resultBool {
 		t.Errorf("Expected true, got %v and number:%v", resultBool, len(*result))
 		for _, value := range *result {
@@ -227,8 +226,8 @@ func TestSisterInLawNegativeNotFound(t *testing.T) {
 	}
 }
 func TestFindChildrenPositive(t *testing.T) {
-	family.Init()
-	result, resultBool, _ := family.FindChildren("Chit", helpers.GenderMale)
+	familyTree.PopulateFamilyTree()
+	result, resultBool, _ := familyTree.FindChildren("Chit", helpers.GenderMale)
 	if !resultBool {
 		t.Errorf("Expected true, got %v and children %v", resultBool, len(*result))
 		for _, value := range *result {
@@ -238,8 +237,8 @@ func TestFindChildrenPositive(t *testing.T) {
 }
 
 func TestFindChildrenNegativeNoChild(t *testing.T) {
-	family.Init()
-	result, resultBool, _ := family.FindChildren("Yodhan", helpers.GenderMale)
+	familyTree.PopulateFamilyTree()
+	result, resultBool, _ := familyTree.FindChildren("Yodhan", helpers.GenderMale)
 	if resultBool {
 		t.Errorf("Expected true, got %v and children %v", resultBool, len(*result))
 		for _, value := range *result {
@@ -249,8 +248,8 @@ func TestFindChildrenNegativeNoChild(t *testing.T) {
 }
 
 func TestFindChildrenNegativeNotFound(t *testing.T) {
-	family.Init()
-	result, resultBool, _ := family.FindChildren("Todhan", helpers.GenderMale)
+	familyTree.PopulateFamilyTree()
+	result, resultBool, _ := familyTree.FindChildren("Todhan", helpers.GenderMale)
 	if resultBool {
 		t.Errorf("Expected true, got %v and children %v", resultBool, len(*result))
 		for _, value := range *result {
@@ -259,8 +258,8 @@ func TestFindChildrenNegativeNotFound(t *testing.T) {
 	}
 }
 func TestFindSiblingsPositive(t *testing.T) {
-	family.Init()
-	result, resultBool, _ := family.FindSiblings("Vyas")
+	familyTree.PopulateFamilyTree()
+	result, resultBool, _ := familyTree.FindSiblings("Vyas")
 	if !resultBool {
 		t.Errorf("Expected true, for %v and sibling count %v", resultBool, len(*result))
 		for _, value := range *result {
@@ -269,8 +268,8 @@ func TestFindSiblingsPositive(t *testing.T) {
 	}
 }
 func TestFindSiblingsNegativeNoSiblings(t *testing.T) {
-	family.Init()
-	result, resultBool, _ := family.FindSiblings("Yodhan")
+	familyTree.PopulateFamilyTree()
+	result, resultBool, _ := familyTree.FindSiblings("Yodhan")
 	if resultBool {
 		t.Errorf("Expected true, for %v and sibling count %v", resultBool, len(*result))
 		for _, value := range *result {
@@ -280,8 +279,8 @@ func TestFindSiblingsNegativeNoSiblings(t *testing.T) {
 }
 
 func TestFindSiblingsNegativeNotFound(t *testing.T) {
-	family.Init()
-	result, resultBool, _ := family.FindSiblings("Todhan")
+	familyTree.PopulateFamilyTree()
+	result, resultBool, _ := familyTree.FindSiblings("Todhan")
 	if resultBool {
 		t.Errorf("Expected true, for %v and sibling count %v", resultBool, len(*result))
 		for _, value := range *result {
@@ -290,30 +289,30 @@ func TestFindSiblingsNegativeNotFound(t *testing.T) {
 	}
 }
 func TestFindParentPositive(t *testing.T) {
-	family.Init()
-	result, resultBool := family.FindParent("Yodhan")
+	familyTree.PopulateFamilyTree()
+	result, resultBool := familyTree.FindParent("Yodhan")
 	if !resultBool {
 		t.Errorf("Expected true, got %v with name %v", resultBool, result.Name)
 	}
 }
 func TestFindParentNegativeRoot(t *testing.T) {
-	family.Init()
-	_, responseBool := family.FindParent("Anga")
+	familyTree.PopulateFamilyTree()
+	_, responseBool := familyTree.FindParent("Anga")
 	if responseBool {
 		t.Errorf("Expected false, received %v", responseBool)
 	}
 }
 func TestFindParentNegative(t *testing.T) {
-	family.Init()
-	result, resultBool := family.FindParent("Shan")
+	familyTree.PopulateFamilyTree()
+	result, resultBool := familyTree.FindParent("Shan")
 	if resultBool {
 		t.Errorf("Expected true, got %v with name %v", resultBool, result.Name)
 	}
 }
 
 func TestFindParentNegativeNotFound(t *testing.T) {
-	family.Init()
-	result, resultBool := family.FindParent("Todhan")
+	familyTree.PopulateFamilyTree()
+	result, resultBool := familyTree.FindParent("Todhan")
 	if resultBool {
 		t.Errorf("Expected true, got %v with name %v", resultBool, result.Name)
 	}

@@ -8,16 +8,20 @@ import (
 
 func main() {
 	args := os.Args
-	if len(args) < 2 {
+	switch true {
+	case len(args) < 2:
 		fmt.Println("Need 1 argument for the file")
 		return
-	}
-	if len(args) > 2 {
+	case len(args) > 2:
 		fmt.Println("Need only 1 argument for the file")
 		return
+	default:
+		actions.Init(args[1])
+
 	}
-	initBool := actions.Init(args[1])
-	if !initBool {
-		return
-	}
+	// initBool :=
+
+	// if !initBool {
+	// 	return
+	// }
 }
