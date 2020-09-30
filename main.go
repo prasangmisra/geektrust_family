@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"geektrust/actions"
+	"geektrust/helpers"
 	"os"
 )
 
@@ -16,7 +17,10 @@ func main() {
 		fmt.Println("Need only 1 argument for the file")
 		return
 	default:
-		actions.Init(args[1])
+		isFileExist := helpers.FileExists(args[1])
+		if isFileExist {
+			actions.Init(args[1])
+		}
 
 	}
 	// initBool :=

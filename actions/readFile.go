@@ -8,34 +8,30 @@ import (
 
 //Init function starts the program
 func Init(path string) bool {
-	isFileExist := helpers.FileExists(path)
-	if isFileExist {
-		//This means file exists
-		allCommands := helpers.ReadFileFromPath(path)
-		if len(allCommands) > 0 {
-			//There are some commands
-			var validCommands [][]string
-			for _, commandLine := range allCommands {
-				isValidCommand, command := IsValidCommand(commandLine)
-				if isValidCommand {
-					validCommands = append(validCommands, command)
-				}
+	//This means file exists
+	allCommands := helpers.ReadFileFromPath(path)
+	if len(allCommands) > 0 {
+		//There are some commands
+		var validCommands [][]string
+		for _, commandLine := range allCommands {
+			isValidCommand, command := IsValidCommand(commandLine)
+			if isValidCommand {
+				validCommands = append(validCommands, command)
 			}
-			if len(validCommands) > 0 {
-				//We have some valid commands
-				//Since we have some commands to run, its a good time to initialize the family
-				var familyTree models.Family
-				familyTree.PopulateFamilyTree()
-				return RunCommands(validCommands, familyTree)
-			}
-			//fmt.Println("No valid commands found")
-			return false
 		}
-		//fmt.Println("No commands found in the file")
+		if len(validCommands) > 0 {
+			//We have some valid commands
+			//Since we have some commands to run, its a good time to initialize the family
+			var familyTree models.Family
+			familyTree.PopulateFamilyTree()
+			return RunCommands(validCommands, familyTree)
+		}
+		//fmt.Println("No valid commands found")
 		return false
 	}
-	//fmt.Println("File is missing, curropted or inappropriate")
+	//fmt.Println("No commands found in the file")
 	return false
+
 }
 
 //IsValidCommand function returns true if the string is a valid command
