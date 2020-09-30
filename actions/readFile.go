@@ -1,9 +1,10 @@
 package actions
 
 import (
+	"strings"
+
 	"geektrust/helpers"
 	"geektrust/models"
-	"strings"
 )
 
 //Init function starts the program
