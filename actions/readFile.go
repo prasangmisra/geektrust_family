@@ -9,7 +9,7 @@ import (
 //Init function starts the program
 func Init(path string) bool {
 	//This means file exists
-	allCommands := helpers.ReadFileFromPath(path)
+	allCommands := helpers.ReadCommandsFromFile(path)
 	if len(allCommands) > 0 {
 		//There are some commands
 		var validCommands [][]string

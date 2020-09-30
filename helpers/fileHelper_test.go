@@ -23,14 +23,14 @@ func TestFileExistsNegativeWrongFile(t *testing.T) {
 }
 
 func TestReadFileFromPathPositive(t *testing.T) {
-	result := ReadFileFromPath("/Users/prasangmisra/go/src/geektrust/input.txt")
+	result := ReadCommandsFromFile("/Users/prasangmisra/go/src/geektrust/input.txt")
 	if len(result) != 3 {
 		t.Errorf("Expected 3 lines, got %v", len(result))
 	}
 }
 
 func TestReadFileFromPathNegativeNoFile(t *testing.T) {
-	result := ReadFileFromPath("/Users/prasangmisra/go/src/geektrust/inputLong.txt")
+	result := ReadCommandsFromFile("/Users/prasangmisra/go/src/geektrust/inputLong.txt")
 	if len(result) != 0 {
 		t.Errorf("Expected 3 lines, got %v", len(result))
 	}

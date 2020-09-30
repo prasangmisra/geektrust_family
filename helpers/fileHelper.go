@@ -14,8 +14,8 @@ func FileExists(filePath string) bool {
 	return !info.IsDir()
 }
 
-//ReadFileFromPath extracts the lines of the file and returns an array of strings
-func ReadFileFromPath(filepath string) []string {
+//ReadCommandsFromFile extracts the lines of the file and returns an array of strings
+func ReadCommandsFromFile(filepath string) []string {
 	var result []string
 	file, err := os.Open(filepath)
 	if err != nil {
