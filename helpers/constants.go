@@ -1,52 +1,54 @@
 package helpers
 
-//RelationshipPaternalUncle constant
-const RelationshipPaternalUncle = "Paternal-Uncle"
+const (
+	//RelationshipPaternalUncle constant
+	RelationshipPaternalUncle = "Paternal-Uncle"
 
-//RelationshipMaternalUncle constant
-const RelationshipMaternalUncle = "Maternal-Uncle"
+	//RelationshipMaternalUncle constant
+	RelationshipMaternalUncle = "Maternal-Uncle"
 
-//RelationshipPaternalAunt constant
-const RelationshipPaternalAunt = "Paternal-Aunt"
+	//RelationshipPaternalAunt constant
+	RelationshipPaternalAunt = "Paternal-Aunt"
 
-//RelationshipMaternalAunt constant
-const RelationshipMaternalAunt = "Maternal-Aunt"
+	//RelationshipMaternalAunt constant
+	RelationshipMaternalAunt = "Maternal-Aunt"
 
-//RelationshipSisterInLaw constant
-const RelationshipSisterInLaw = "Sister-In-Law"
+	//RelationshipSisterInLaw constant
+	RelationshipSisterInLaw = "Sister-In-Law"
 
-//RelationshipBrotherInLaw constant
-const RelationshipBrotherInLaw = "Brother-In-Law"
+	//RelationshipBrotherInLaw constant
+	RelationshipBrotherInLaw = "Brother-In-Law"
 
-//RelationshipSon constant
-const RelationshipSon = "Son"
+	//RelationshipSon constant
+	RelationshipSon = "Son"
 
-//RelationshipDaughter constant
-const RelationshipDaughter = "Daughter"
+	//RelationshipDaughter constant
+	RelationshipDaughter = "Daughter"
 
-//RelationshipSiblings constant
-const RelationshipSiblings = "Siblings"
+	//RelationshipSiblings constant
+	RelationshipSiblings = "Siblings"
 
-//GenderMale constant
-const GenderMale = "Male"
+	//GenderMale constant
+	GenderMale = "Male"
 
-//GenderFemale constant
-const GenderFemale = "Female"
+	//GenderFemale constant
+	GenderFemale = "Female"
 
-//ResponseNotFound constant
-const ResponseNotFound = "PERSON_NOT_FOUND"
+	//ResponseNotFound constant
+	ResponseNotFound = "PERSON_NOT_FOUND"
 
-//ResponseChildAdditionSuccess constant
-const ResponseChildAdditionSuccess = "CHILD_ADDITION_SUCCEEDED"
+	//ResponseChildAdditionSuccess constant
+	ResponseChildAdditionSuccess = "CHILD_ADDITION_SUCCEEDED"
 
-//ResponseChildAdditionFail constant
-const ResponseChildAdditionFail = "CHILD_ADDITION_FAILED"
+	//ResponseChildAdditionFail constant
+	ResponseChildAdditionFail = "CHILD_ADDITION_FAILED"
 
-//ResponseNone constane
-const ResponseNone = "NONE"
+	//ResponseNone constane
+	ResponseNone = "NONE"
 
-//AddChild constant
-const AddChild = "ADD_CHILD"
+	//AddChild constant
+	AddChild = "ADD_CHILD"
 
-//GetRelationship constant
-const GetRelationship = "GET_RELATIONSHIP"
+	//GetRelationship constant
+	GetRelationship = "GET_RELATIONSHIP"
+)
